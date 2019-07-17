@@ -134,9 +134,11 @@ from pandas import DataFrame as df
 # word_exist = [ lambda doc : 1 if 'cryptozoology' in doc else 0 for doc in corpus ]
 # print (sum(word_exist))
 
-file_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\working\\train.tf_record"
-with open(file=file_path, mode='w') as myFile:
-    pass
+# file_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\working\\train.tf_record"
+# with open(file=file_path, mode='w') as myFile:
+#     pass
 
  
 
+import tensorflow_hub as hub
+m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")

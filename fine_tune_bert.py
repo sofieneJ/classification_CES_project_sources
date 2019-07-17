@@ -461,6 +461,10 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
             num_labels, use_one_hot_embeddings)
 
+        #SJ added for logs
+        logging_hook = tf.train.LoggingTensorHook({"loss" : total_loss}, every_n_iter=10)
+        
+
         tvars = tf.trainable_variables()
         initialized_variable_names = {}
         scaffold_fn = None
@@ -494,7 +498,8 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                 mode=mode,
                 loss=total_loss,
                 train_op=train_op,
-                scaffold=scaffold_fn)
+                scaffold=scaffold_fn,
+                training_hooks = [logging_hook])
         elif mode == tf.estimator.ModeKeys.EVAL:
 
             def metric_fn(per_example_loss, label_ids, probabilities, is_real_example):
@@ -609,8 +614,11 @@ if __name__ == "__main__":
                                         config=run_config,
                                         params={"batch_size": BATCH_SIZE})
 
+    
+    tf.logging.set_verbosity(tf.logging.INFO)
+
     print(f'Beginning Training!')
     current_time = datetime.now()
-    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
+    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps,)
     print("Training took time ", datetime.now() - current_time)
     
