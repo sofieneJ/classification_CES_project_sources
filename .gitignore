@@ -1,0 +1,14 @@
+*.bin
+*.zip
+.vscode/
+__pycache__/
+bert_embeddings_data/
+custom_doc2vec_data/
+data/
+doc2vec_data/
+ELmo_20news_group_rep/
+ElmoRep_data/
+fastText_data/
+local_bert_embeddings/
+local_universal_encoder_data/
+model/
