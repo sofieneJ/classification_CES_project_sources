@@ -21,7 +21,11 @@ from bert import modeling
 # get_signature_names()
 
 ##use downloaded model, change path accordingly
-model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\uncased_L-12_H-768_A-12\\"
+bGPU = tf.test.is_gpu_available(    cuda_only=False,    min_cuda_compute_capability=None)
+if bGPU:
+    model_path = "D:\\MyDocs\\machineLearning\\BERT\\uncased_L-12_H-768_A-12\\"
+else:
+    model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\uncased_L-12_H-768_A-12\\"
 BERT_VOCAB= model_path + 'vocab.txt'
 BERT_INIT_CHKPNT = model_path+'bert_model.ckpt' #.data-00000-of-00001
 BERT_CONFIG = model_path+ 'bert_config.json'
