@@ -21,7 +21,13 @@ from bert import modeling
 # get_signature_names()
 
 ##use downloaded model, change path accordingly
-pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
+
+bBuildWithCuda =tf.test.is_built_with_cuda()
+bGPU = tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)
+if bGPU:
+    pretrained_model_path = "D:\\MyDocs\\machineLearning\\BERT\\uncased_L-12_H-768_A-12\\"
+else:
+    pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
 BERT_VOCAB= pretrained_model_path + 'vocab.txt'
 BERT_INIT_CHKPNT = pretrained_model_path+'bert_model.ckpt' #.data-00000-of-00001
 BERT_CONFIG = pretrained_model_path+ 'bert_config.json'
@@ -586,7 +592,7 @@ def run_classification():
     # is small and gradually increases--usually helps training.
     WARMUP_PROPORTION = 0.1
     # Model configs
-    SAVE_CHECKPOINTS_STEPS = 10 #1000
+    SAVE_CHECKPOINTS_STEPS = 1000 #1000
     SAVE_SUMMARY_STEPS = 5 #500
 
     # Compute # train and warmup steps from batch size
@@ -636,6 +642,24 @@ def run_classification():
     current_time = datetime.now()
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps,)
     print("Training took time ", datetime.now() - current_time)
+
+
+    #Evaluation
+    test_df = generate_raw_data_df(subset='test')
+    test_InputExamples = test_df.apply(lambda x: bert.run_classifier.InputExample(guid=None, 
+                                                                   text_a = x['text'], 
+                                                                   text_b = None, 
+                                                                   label = x['cat']), axis = 1)
+
+    test_features = bert.run_classifier.convert_examples_to_features(test_InputExamples, [0,1,2,3,4], MAX_SEQ_LENGTH, tokenizer)
+    
+    test_input_fn = run_classifier.input_fn_builder(
+        features=test_features,
+        seq_length=MAX_SEQ_LENGTH,
+        is_training=False,
+        drop_remainder=False)
+    eval_dic = estimator.evaluate(input_fn=test_input_fn, steps=None)
+    print (eval_dic)
 
 if __name__ == "__main__":
     # generate_raw_data_df()

@@ -1,7 +1,5 @@
 from tools import *
 # from elmoformanylangs import Embedder
-from pandas import DataFrame as df
-
 # sentence = 'from article colorado colorado eric let like this the similarity liter engine displacement actually the coupe the funky looking new sedan share liter six es popular small sedan the luxury sports coupe new luxury sedan es base executive sedan all look completely different'
 # # sentence = gensim.parsing.preprocessing.stem_text(sentence) 
 # print(sentence)
@@ -151,10 +149,35 @@ from pandas import DataFrame as df
 # np_ind = np_ind[np_ind != 'videeee']
 # print(np_ind)
 
-my_list = ['bob', 'alice', 'sebastien']
-Ser_list = pd.Series(my_list)
-print (Ser_list)
-Ser_list = Ser_list.apply(lambda x: x if len(x)>3 else 'vide', convert_dtype=True)
-print (Ser_list)
-Ser_list = Ser_list[Ser_list != 'vide']
-print(Ser_list)
+
+# from pandas import DataFrame as df
+# my_list = ['bob', 'alice', 'sebastien']
+# Ser_list = pd.Series(my_list)
+# print (Ser_list)
+# Ser_list = Ser_list.apply(lambda x: x if len(x)>3 else 'vide', convert_dtype=True)
+# print (Ser_list)
+# Ser_list = Ser_list[Ser_list != 'vide']
+# print(Ser_list)
+
+import tensorflow as tf
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)}')
+# import tensorflow_hub as hub
+# m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
+
+
+import bert
+from bert import run_classifier
+from bert import optimization
+from bert import tokenization
+from bert import modeling
+
+pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
+BERT_VOCAB= pretrained_model_path + 'vocab.txt'
+tokenizer = tokenization.FullTokenizer(vocab_file=BERT_VOCAB, do_lower_case=True)
+
+tokens = tokenizer.tokenize('Alice loves lovely almonds. But she likes eating them with chocolate')
+input_ids = tokenizer.convert_tokens_to_ids(tokens)
+print (input_ids)
+
