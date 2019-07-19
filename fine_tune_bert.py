@@ -21,7 +21,8 @@ from bert import modeling
 # get_signature_names()
 
 ##use downloaded model, change path accordingly
-bGPU = tf.test.is_gpu_available(    cuda_only=False,    min_cuda_compute_capability=None)
+bBuildWithCuda =tf.test.is_built_with_cuda()
+bGPU = tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)
 if bGPU:
     model_path = "D:\\MyDocs\\machineLearning\\BERT\\uncased_L-12_H-768_A-12\\"
 else:

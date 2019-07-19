@@ -1,6 +1,10 @@
 from tools import *
-from elmoformanylangs import Embedder
+# from elmoformanylangs import Embedder
+import tensorflow as tf
 from pandas import DataFrame as df
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)}')
 
 # sentence = 'from article colorado colorado eric let like this the similarity liter engine displacement actually the coupe the funky looking new sedan share liter six es popular small sedan the luxury sports coupe new luxury sedan es base executive sedan all look completely different'
 # # sentence = gensim.parsing.preprocessing.stem_text(sentence) 
@@ -140,5 +144,5 @@ from pandas import DataFrame as df
 
  
 
-import tensorflow_hub as hub
-m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
+# import tensorflow_hub as hub
+# m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
