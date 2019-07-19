@@ -1,5 +1,5 @@
 from tools import *
-from elmoformanylangs import Embedder
+# from elmoformanylangs import Embedder
 from pandas import DataFrame as df
 
 # sentence = 'from article colorado colorado eric let like this the similarity liter engine displacement actually the coupe the funky looking new sedan share liter six es popular small sedan the luxury sports coupe new luxury sedan es base executive sedan all look completely different'
@@ -139,6 +139,22 @@ from pandas import DataFrame as df
 #     pass
 
  
+## TENSOR FLOW HUB download
+# import tensorflow_hub as hub
+# m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
 
-import tensorflow_hub as hub
-m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
+# my_list = ['bob', 'alice', 'sebastien']
+# np_list = np.array(my_list).reshape(len(my_list),1)
+# print (np_list)
+# np_ind = np.apply_along_axis(lambda x: str(x[0]) if len(x[0]) >3 else 'videeee', axis=1, arr=np_list)
+# print (np_ind)
+# np_ind = np_ind[np_ind != 'videeee']
+# print(np_ind)
+
+my_list = ['bob', 'alice', 'sebastien']
+Ser_list = pd.Series(my_list)
+print (Ser_list)
+Ser_list = Ser_list.apply(lambda x: x if len(x)>3 else 'vide', convert_dtype=True)
+print (Ser_list)
+Ser_list = Ser_list[Ser_list != 'vide']
+print(Ser_list)

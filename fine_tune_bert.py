@@ -21,10 +21,10 @@ from bert import modeling
 # get_signature_names()
 
 ##use downloaded model, change path accordingly
-model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\uncased_L-12_H-768_A-12\\"
-BERT_VOCAB= model_path + 'vocab.txt'
-BERT_INIT_CHKPNT = model_path+'bert_model.ckpt' #.data-00000-of-00001
-BERT_CONFIG = model_path+ 'bert_config.json'
+pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
+BERT_VOCAB= pretrained_model_path + 'vocab.txt'
+BERT_INIT_CHKPNT = pretrained_model_path+'bert_model.ckpt' #.data-00000-of-00001
+BERT_CONFIG = pretrained_model_path+ 'bert_config.json'
 
 tokenization.validate_case_matches_checkpoint(True,BERT_INIT_CHKPNT)
 tokenizer = tokenization.FullTokenizer(vocab_file=BERT_VOCAB, do_lower_case=True)
@@ -85,24 +85,39 @@ my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.ele
 def generate_raw_data_df(subset='train'):
     def my_simple_reading_func(corpus):
         for doc in corpus:
-            yield doc
-            # yield ' '.join(gensim.utils.simple_preprocess(doc, min_len=1, max_len=25))
+            # yield doc
+            seq = gensim.utils.simple_preprocess(gensim.parsing.remove_stopwords(doc), min_len=2, max_len=25)
+            yield ' '.join(seq)
+
     # my_simple_reading_func = lambda corpus :  yield doc for doc in corpus
     dataset_list = [list(my_simple_reading_func(fetch_20newsgroups(subset=subset,
                                           remove=('headers', 'footers', 'quotes'),
                                     categories=[cat])['data']))\
                         for cat in my_cats]
-    corpus = [doc for categroy_list in dataset_list for doc in categroy_list ]
 
-    print ('raw corpus size : {}'.format(len(corpus)))
     categories_lengths=[len(cat_liste) for cat_liste in dataset_list]
     categories = [[k for _ in range(0,length)] for k,length in enumerate(categories_lengths)]
-    cats = [cat for elem_list in categories for cat in elem_list]
+    cats_ser = pd.Series([cat for elem_list in categories for cat in elem_list])
 
-    my_data_dict = {'text':corpus, 'cat':cats}
-    ret_df = pd.DataFrame(data=my_data_dict)
-    print(ret_df.dtypes)
-    # print (ret_df.head())
+    corpus_ser = pd.Series([doc for categroy_list in dataset_list for doc in categroy_list ])
+    corpus_ser = corpus_ser.apply(lambda x: x if len(x.split())<256 and len(x.split())>10 else 'refused', convert_dtype=True)
+    my_index = corpus_ser != 'refused'
+    corpus_ser = corpus_ser[my_index].reindex()
+    cats_ser =cats_ser[my_index].reindex()
+
+    # print (corpus_ser.head())
+    # print (cats_ser.head())
+
+    doc_lens = np.array([len(doc.split()) for doc in corpus_ser])
+    print (f'mean length is {np.mean(doc_lens)}')
+    print (f'max length is {np.max(doc_lens)}')
+    print ('raw corpus size : {}'.format(corpus_ser.size))
+
+
+    data_dic = {'text': corpus_ser, 'cat':cats_ser}
+    ret_df = pd.DataFrame(data_dic)
+    # print(ret_df.dtypes)
+    print (ret_df.head())
     return ret_df
 
 
@@ -542,7 +557,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
     return model_fn
 
 
-if __name__ == "__main__":
+def run_classification():
     train_df = generate_raw_data_df(subset='train')
     TRAIN_VAL_RATIO = 0.9
     LEN = train_df.shape[0]
@@ -571,13 +586,13 @@ if __name__ == "__main__":
     # is small and gradually increases--usually helps training.
     WARMUP_PROPORTION = 0.1
     # Model configs
-    SAVE_CHECKPOINTS_STEPS = 1000
-    SAVE_SUMMARY_STEPS = 500
+    SAVE_CHECKPOINTS_STEPS = 10 #1000
+    SAVE_SUMMARY_STEPS = 5 #500
 
     # Compute # train and warmup steps from batch size
     num_train_steps = int(len(train_examples) / BATCH_SIZE * NUM_TRAIN_EPOCHS)
     num_warmup_steps = int(num_train_steps * WARMUP_PROPORTION)
-    model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\bert_models\\working\\"
+    model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\working\\"
     train_file = os.path.join(model_path, "train.tf_record")
     #filename = Path(train_file)
     if not os.path.exists(train_file):
@@ -621,4 +636,8 @@ if __name__ == "__main__":
     current_time = datetime.now()
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps,)
     print("Training took time ", datetime.now() - current_time)
+
+if __name__ == "__main__":
+    # generate_raw_data_df()
+    run_classification()
     
