@@ -167,17 +167,16 @@ print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cud
 # m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
 
 
-import bert
-from bert import run_classifier
-from bert import optimization
-from bert import tokenization
-from bert import modeling
+# import bert
+# from bert import run_classifier
+# from bert import optimization
+# from bert import tokenization
+# from bert import modeling
 
-pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
-BERT_VOCAB= pretrained_model_path + 'vocab.txt'
-tokenizer = tokenization.FullTokenizer(vocab_file=BERT_VOCAB, do_lower_case=True)
+# pretrained_model_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\uncased_L-12_H-768_A-12\\"
+# BERT_VOCAB= pretrained_model_path + 'vocab.txt'
+# tokenizer = tokenization.FullTokenizer(vocab_file=BERT_VOCAB, do_lower_case=True)
 
-tokens = tokenizer.tokenize('Alice loves lovely almonds. But she likes eating them with chocolate')
-input_ids = tokenizer.convert_tokens_to_ids(tokens)
-print (input_ids)
-
+# tokens = tokenizer.tokenize('Alice loves lovely almonds. But she likes eating them with chocolate')
+# input_ids = tokenizer.convert_tokens_to_ids(tokens)
+# print (input_ids)
