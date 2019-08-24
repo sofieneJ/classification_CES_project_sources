@@ -18,7 +18,8 @@ sess = tf.Session()
 
 
 # Params for bert model and tokenization
-bert_path = "https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
+g_bert_path = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models\\bert_models\\tf_hub_bert_uncased_L-12_H-768_A-12"
+g_save_trained_model_path = 'model\\keras_fine_tuned_bert_classifier\\BertModel.h5'
 max_seq_length = 256
 
 from sklearn.datasets import fetch_20newsgroups
@@ -96,7 +97,7 @@ class InputExample(object):
 
 def create_tokenizer_from_hub_module():
     """Get the vocab file and casing info from the Hub module."""
-    bert_module =  hub.Module(bert_path)
+    bert_module =  hub.Module(g_bert_path)
     tokenization_info = bert_module(signature="tokenization_info", as_dict=True)
     vocab_file, do_lower_case = sess.run(
         [
@@ -183,7 +184,7 @@ class BertLayer(tf.keras.layers.Layer):
         self,
         n_fine_tune_layers=10,
         pooling="first",
-        bert_path="https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1",
+        bert_path=g_bert_path,
         **kwargs,
     ):
         self.n_fine_tune_layers = n_fine_tune_layers
@@ -293,7 +294,7 @@ def initialize_vars(sess):
     sess.run(tf.tables_initializer())
     K.set_session(sess)
 
-def run_classification(): 
+def train_classification(): 
     train_df = generate_raw_data_df(subset='train')
     test_df = generate_raw_data_df(subset='test')
 
@@ -339,5 +340,92 @@ def run_classification():
         batch_size=32
     )
 
+    model.save(g_save_trained_model_path)
+    pre_save_preds = model.predict([test_input_ids[0:100], 
+                                    test_input_masks[0:100], 
+                                    test_segment_ids[0:100]]
+                                ) # predictions before we clear and reload model
+
+    print (pre_save_preds)
+
+
+def predict_with_finetuned_model():
+    test_df = generate_raw_data_df(subset='test')
+    test_text = test_df[DATA_COLUMN].tolist()
+    test_text = np.array(test_text, dtype=object)[:, np.newaxis]
+    test_label = test_df[LABEL_COLUMN].tolist()
+
+    # Instantiate tokenizer
+    tokenizer = create_tokenizer_from_hub_module()
+
+    test_examples = convert_text_to_examples(test_text, test_label)
+    (test_input_ids, test_input_masks, test_segment_ids, test_labels
+    ) = convert_examples_to_features(tokenizer, test_examples, max_seq_length=max_seq_length)
+
+    model = build_model(max_seq_length)
+    initialize_vars(sess)
+    model.load_weights(g_save_trained_model_path)
+
+    # post_save_preds = model.predict([test_input_ids[0:2], 
+    #                                 test_input_masks[0:2], 
+    #                                 test_segment_ids[0:2]]
+    #                             ) # predictions after we clear and reload model
+
+    post_save_preds = model.predict([[test_input_ids[1000]], 
+                                    [test_input_masks[1000]], 
+                                    [test_segment_ids[1000]]]
+                                ) # predictions after we clear and reload model
+
+    # all(pre_save_preds == post_save_preds) # Are they the same?
+    print (post_save_preds)
+
+
+def predict_single_sample_with_finetuned_model(sample):
+    seq = gensim.utils.simple_preprocess(gensim.parsing.remove_stopwords(sample), min_len=2, max_len=25)
+    if (len(seq) > 256):
+        raise NameError(
+                f"sequence is too long: the obtained size after preprocessing is {len(seq)}. Maximum size is {max_seq_length}"
+            )
+    if (len(seq)<10):
+        raise NameError(
+                f"sequence is too short: the obtained size after preprocessing is {len(seq)}. Minimum size is 10"
+            )
+    
+    bert_example = convert_text_to_examples(texts = [seq], labels=[-1])
+    # bert_sample = InputExample(guid=None, text_a=" ".join(seq), text_b=None, label=-1)
+    # Instantiate tokenizer
+    tokenizer = create_tokenizer_from_hub_module()
+
+    input_id, input_mask, segment_id, _ = convert_single_example(
+        tokenizer, bert_example[0], max_seq_length
+    )
+
+    model = build_model(max_seq_length)
+    initialize_vars(sess)
+    model.load_weights(g_save_trained_model_path)
+
+    post_save_preds = model.predict([[input_id], 
+                                    [input_mask], 
+                                    [segment_id]]
+                                ) # predictions after we clear and reload model
+
+    # all(pre_save_preds == post_save_preds) # Are they the same?
+    return post_save_preds[0]
+    # print (post_save_preds)
+
 if __name__=='__main__':
-    run_classification()
+    # train_classification()
+    # predict_with_finetuned_model()
+
+
+    #########predict a single sample#######################
+    my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+    cat = 'rec.sport.baseball'
+    sample_index = 99
+    sample = fetch_20newsgroups(subset='test',
+                            remove=('headers', 'footers', 'quotes'),
+                            categories=[cat])['data'][sample_index]
+    print (sample)
+    probs = predict_single_sample_with_finetuned_model(sample)
+    prob_dict = {a[0]:a[1] for a in zip(my_cats, probs)}
+    print (prob_dict)

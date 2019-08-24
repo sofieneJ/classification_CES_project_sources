@@ -159,13 +159,17 @@ from tools import *
 # Ser_list = Ser_list[Ser_list != 'vide']
 # print(Ser_list)
 
-import tensorflow as tf
-from tensorflow.python.client import device_lib
-print(device_lib.list_local_devices())
-print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)}')
-# import tensorflow_hub as hub
-# m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
-
+# import tensorflow as tf
+# from tensorflow.python.client import device_lib
+# print(device_lib.list_local_devices())
+# print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cuda_compute_capability=None)}')
+import tensorflow_hub as hub
+import os
+os.environ["TFHUB_CACHE_DIR"] = "C:\\Users\\sofiene.jenzri\\Documents\\OneDrive - UiPath\\Documents\\DataScience\\LM_models"
+m=hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/1")
+bert_pretrained_model = 'bert_uncased_L-12_H-768_A-12' #bert_uncased_L-24_H-1024_A-16 is not memory-manageable
+bert_path = f"https://tfhub.dev/google/{bert_pretrained_model}/1"
+m=hub.Module(bert_path)
 
 # import bert
 # from bert import run_classifier
@@ -180,3 +184,4 @@ print (f'GPU available? {tf.test.is_gpu_available(    cuda_only=True,    min_cud
 # tokens = tokenizer.tokenize('Alice loves lovely almonds. But she likes eating them with chocolate')
 # input_ids = tokenizer.convert_tokens_to_ids(tokens)
 # print (input_ids)
+
