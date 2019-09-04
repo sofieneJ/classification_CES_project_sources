@@ -10,6 +10,7 @@ from tensorflow.keras import backend as K
 import gensim
 import keras
 from datetime import datetime
+from sklearn.metrics import classification_report
 
 ################################### cf https://github.com/strongio/keras-bert ##############################################################
 
@@ -371,13 +372,14 @@ def predict_with_finetuned_model():
     #                                 test_segment_ids[0:2]]
     #                             ) # predictions after we clear and reload model
 
-    post_save_preds = model.predict([[test_input_ids[1000]], 
-                                    [test_input_masks[1000]], 
-                                    [test_segment_ids[1000]]]
+    post_save_preds = model.predict([test_input_ids, 
+                                    test_input_masks, 
+                                    test_segment_ids]
                                 ) # predictions after we clear and reload model
 
     # all(pre_save_preds == post_save_preds) # Are they the same?
-    print (post_save_preds)
+    predicted_classes = np.argmax(post_save_preds, axis=1)
+    print (classification_report(test_label,predicted_classes,target_names = my_cats))
 
 
 def predict_single_sample_with_finetuned_model(sample):
@@ -416,16 +418,16 @@ def predict_single_sample_with_finetuned_model(sample):
 if __name__=='__main__':
     # train_classification()
     # predict_with_finetuned_model()
-
+    predict_with_finetuned_model()
 
     #########predict a single sample#######################
-    my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
-    cat = 'rec.sport.baseball'
-    sample_index = 99
-    sample = fetch_20newsgroups(subset='test',
-                            remove=('headers', 'footers', 'quotes'),
-                            categories=[cat])['data'][sample_index]
-    print (sample)
-    probs = predict_single_sample_with_finetuned_model(sample)
-    prob_dict = {a[0]:a[1] for a in zip(my_cats, probs)}
-    print (prob_dict)
+    # my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+    # cat = 'rec.sport.baseball'
+    # sample_index = 99
+    # sample = fetch_20newsgroups(subset='test',
+    #                         remove=('headers', 'footers', 'quotes'),
+    #                         categories=[cat])['data'][sample_index]
+    # print (sample)
+    # probs = predict_single_sample_with_finetuned_model(sample)
+    # prob_dict = {a[0]:a[1] for a in zip(my_cats, probs)}
+    # print (prob_dict)

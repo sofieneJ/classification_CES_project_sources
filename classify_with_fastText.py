@@ -102,7 +102,7 @@ def classify(dim):
   clf.fit(X_train, y_train)
   print (f'{clf.__class__.__name__} with FastText score {clf.score(X_test, y_test)}')
 
-def compute_f1_score(dim=100):
+def analyse_accuracy(dim=100):
   X_train = np.loadtxt('fastText_data\\X{}_train.csv'.format(dim), delimiter=',')
   y_train = np.loadtxt('fastText_data\\y{}_train.csv'.format(dim), delimiter=',')
   X_test = np.loadtxt('fastText_data\\X{}_test.csv'.format(dim), delimiter=',')
@@ -122,17 +122,17 @@ def compute_f1_score(dim=100):
   y_pred = clf.predict(X_test)
   print (f'{clf.__class__.__name__} with FastText score {clf.score(X_test, y_test)}')
 
-  print (f'f1 score of {clf.__class__.__name__} is {f1_score(y_test, y_pred, average=None)}')
+  print (classification_report(y_test,y_pred,target_names = my_cats))
 
 
 if __name__ == "__main__":  
   my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
   embedding_size = 100
-  generate_data_set(test_cats = my_cats, subset='train', dim=embedding_size)
-  generate_data_set(test_cats = my_cats, subset='test', dim=embedding_size)
-  classify(dim=embedding_size)
+  # generate_data_set(test_cats = my_cats, subset='train', dim=embedding_size)
+  # generate_data_set(test_cats = my_cats, subset='test', dim=embedding_size)
+  # classify(dim=embedding_size)
 
   # plotFastTextSimilarity()
   # draw_tsne('fastText_data\\X_train.csv', 'fastText_data\\y_train.csv', method='fastText')
-  compute_f1_score()
+  analyse_accuracy()
 

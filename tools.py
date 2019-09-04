@@ -26,6 +26,7 @@ from sklearn.svm import  SVC
 from sklearn.neural_network import MLPClassifier
 
 from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import classification_report
 
 
 english_words = set(nltk.corpus.words.words())

@@ -57,7 +57,7 @@ def classify():
   clf.fit(X_train, y_train)
   print ('rbf SVM with ELMo reps score %f' % clf.score(X_test,y_test))
 
-def compute_f1_score():
+def analyse_accuracy():
   X_train = np.vstack(np.loadtxt('ELmo_20news_group_rep\\X_3L_train{}.csv'.format(i), delimiter=',') 
     for i in range(1,4))
   y_train = np.loadtxt('ELmo_20news_group_rep\\y_train.csv', delimiter=',')
@@ -79,7 +79,8 @@ def compute_f1_score():
   y_pred = clf.predict(X_test)
   print (f'{clf.__class__.__name__} with FastText score {clf.score(X_test, y_test)}')
 
-  print (f'f1 score of {clf.__class__.__name__} is {f1_score(y_test, y_pred, average=None)}')
+  my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+  print (classification_report(y_test,y_pred,target_names = my_cats))
 
 
 
@@ -149,8 +150,8 @@ def plotElmOTextSimilarity ():
 if __name__ == "__main__":  
     # BuildDataSet(subset='train')
     # BuildDataSet(subset='test')
-    classify()
-    # compute_f1_score()
+    # classify()
+    analyse_accuracy()
     # plotElmOTextSimilarity()
 
     ##################T SNE############################""

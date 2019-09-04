@@ -136,12 +136,38 @@ def plotDoc2VecSimilarity ():
   plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
   plt.show()
 
+def analyse_accuracy():
+  X_train = np.loadtxt('doc2vec_data\\X_train.csv', delimiter=',')
+  y_train = np.loadtxt('doc2vec_data\\y_train.csv', delimiter=',')
+  X_test = np.loadtxt('doc2vec_data\\X_test.csv', delimiter=',')
+  y_test = np.loadtxt('doc2vec_data\\y_test.csv', delimiter=',')
+
+  print ('X_train shape : {}'.format(X_train.shape))
+  print ('X_test shape : {}'.format(X_test.shape))
+
+  scaler = StandardScaler()
+  X_train = scaler.fit_transform(X_train)
+  X_test = scaler.transform(X_test)
+
+  index = np.arange(0,X_train.shape[0])
+  np.random.shuffle(index)
+  X_train = X_train[index]
+  y_train = y_train[index]
+
+  clf = LogisticRegression()
+  clf.fit(X_train, y_train)
+  y_pred = clf.predict(X_test)
+  print (f'{clf.__class__.__name__} with doc2vec score {clf.score(X_test, y_test)}')
+
+  my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+  print (classification_report(y_test,y_pred,target_names = my_cats))
 
 if __name__ == "__main__":
   my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
-  generate_data_set(test_cats = my_cats, subset='train')
+  # generate_data_set(test_cats = my_cats, subset='train')
   # generate_data_set(test_cats = my_cats, subset='test')
   # classify()
   # plotDoc2VecSimilarity()
   # draw_tsne('doc2vec_data\\X_train.csv', 'doc2vec_data\\y_train.csv', method='doc2vec')
+  analyse_accuracy()
 

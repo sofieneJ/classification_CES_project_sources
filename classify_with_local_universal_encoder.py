@@ -143,7 +143,7 @@ def classify():
     print ('SVC with BERT Base score %f' % clf.score(X_test,y_test))
 
 
-def compute_f1_score():
+def analyse_accuracy():
     X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
     y_train = np.loadtxt('local_universal_encoder_data\\y_train.csv', delimiter=',')
     X_test = np.loadtxt('local_universal_encoder_data\\X_test.csv', delimiter=',')
@@ -162,16 +162,16 @@ def compute_f1_score():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     print (f'{clf.__class__.__name__} with local universal encoder score {clf.score(X_test, y_test)}')
-
-    print (f'f1 score of {clf.__class__.__name__} is {f1_score(y_test, y_pred, average=None)}')
+    my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+    print (classification_report(y_test,y_pred,target_names = my_cats))
 
 
 if __name__ == "__main__":  
-    my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
-    X_train, y_train = generate_data_set(my_cats, subset='train')
-    X_test, y_test = generate_data_set(my_cats, subset='test')
+    # my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+    # X_train, y_train = generate_data_set(my_cats, subset='train')
+    # X_test, y_test = generate_data_set(my_cats, subset='test')
     # classify()
     # plotBERTTextSimilarity()
-    compute_f1_score()
+    analyse_accuracy()
     # draw_tsne('local_universal_encoder_data\\X_train.csv', 'local_universal_encoder_data\\y_train.csv', method='BERT')
 

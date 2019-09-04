@@ -173,17 +173,54 @@ def plotCustomRepSimilarity ():
     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
     plt.show()
 
+def analyse_accuracy():
+    X_train = np.loadtxt('custom_doc2vec_data\\X_train.csv', delimiter=',')
+    y_train = np.loadtxt('custom_doc2vec_data\\y_train.csv', delimiter=',')
+    X_test = np.loadtxt('custom_doc2vec_data\\X_test.csv', delimiter=',')
+    y_test = np.loadtxt('custom_doc2vec_data\\y_test.csv', delimiter=',')
+    train_index = np.where(X_train.any(axis=1))[0]
+    test_index = np.where(X_test.any(axis=1))[0]
+
+    # print (y.shape)
+    X_train = X_train[train_index]
+    y_train = y_train[train_index]
+    X_test = X_test[test_index]
+    y_test = y_test[test_index]
+
+    print ('X_train shape : {}'.format(X_train.shape))
+    print ('X_test shape : {}'.format(X_test.shape))
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    index = np.arange(0,X_train.shape[0])
+    np.random.shuffle(index)
+    X_train = X_train[index]
+    y_train = y_train[index]
+
+    clf = LogisticRegression()
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    print (f'{clf.__class__.__name__} with custom doc2vec score {clf.score(X_test, y_test)}')
+
+    my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
+    print (classification_report(y_test,y_pred,target_names = my_cats))
+
+
+
 if __name__ == "__main__":  
     train_word2vec()
-    # train_TFIDF()
-    # BuildDataSet(subset='train')
-    # BuildDataSet(subset='test')
+    train_TFIDF()
+    BuildDataSet(subset='train')
+    BuildDataSet(subset='test')
     # classify()
     # plotCustomRepSimilarity()
     # draw_tsne('custom_doc2vec_data\\X_train.csv', 'custom_doc2vec_data\\y_train.csv', method='custom rep')
+    analyse_accuracy()
+    # model_path = "model\\my_word2vec_20news_model"
+    # w2v_model = gensim.models.word2vec.Word2Vec.load(model_path)
+    # print ('cryptozoology embedding ', w2v_model.wv['cryptozoology'])
 
-    model_path = "model\\my_word2vec_20news_model"
-    w2v_model = gensim.models.word2vec.Word2Vec.load(model_path)
-    print ('cryptozoology embedding ', w2v_model.wv['cryptozoology'])
 
 
