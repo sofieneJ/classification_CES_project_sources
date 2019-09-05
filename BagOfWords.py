@@ -146,7 +146,12 @@ def classify_corpus():
   print ('classification score with classifier {}: {}'.format(clf.__class__.__name__,
                         clf.score(X_test_reduced_dim, y_test)))
 
-  plot_learning_curves(X=X_train_reduced_dim, y=y_train)
+  ###########################classification report####################
+  y_pred = clf.predict(X_test_reduced_dim)
+
+  print (classification_report(y_test,y_pred,target_names = my_cats))
+
+  # plot_learning_curves(X=X_train_reduced_dim, y=y_train)
 
 ###########Plotting LEARNING CURVES ########################
 def plot_learning_curves(X,y):
