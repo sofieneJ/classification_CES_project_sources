@@ -27,6 +27,7 @@ from sklearn.neural_network import MLPClassifier
 
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.metrics import classification_report
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 english_words = set(nltk.corpus.words.words())
@@ -45,7 +46,7 @@ def clean_document (doc, bFastText, bRemoveStopWords, min_token_len = 2, max_tok
         # return gensim.utils.simple_preprocess(document)
 
 
-def cosine_similarity(v1, v2):
+def my_cosine_similarity(v1, v2):
     n1 = np.linalg.norm(v1)
     n2 = np.linalg.norm(v2)
     return np.dot(v1, v2) / n1 / n2
@@ -219,3 +220,6 @@ def run_consine_cluster (X, K, bVerbose=False):
         centroids = new_centroids
 
     return classes
+
+# if __name__=='__main__':
+#     draw_tsne('fastText_data\\X100_train.csv', 'fastText_data\\y100_train.csv', method='Fasttext')

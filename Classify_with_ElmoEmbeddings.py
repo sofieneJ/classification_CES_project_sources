@@ -140,7 +140,7 @@ def plotElmOTextSimilarity ():
     
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
-    similarity_matrix = np.inner(X_train, X_train)
+    similarity_matrix = cosine_similarity(X_train, X_train)
     
     plt.figure()
     plt.title('Cosine similarity of ElMO representation')
@@ -151,8 +151,8 @@ if __name__ == "__main__":
     # BuildDataSet(subset='train')
     # BuildDataSet(subset='test')
     # classify()
-    analyse_accuracy()
-    # plotElmOTextSimilarity()
+    # analyse_accuracy()
+    plotElmOTextSimilarity()
 
     ##################T SNE############################""
     # X_train = np.vstack([np.loadtxt('ELmo_20news_group_rep\\X_train{}.csv'.format(i), delimiter=',') 

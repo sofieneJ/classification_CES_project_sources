@@ -164,7 +164,7 @@ def plotCustomRepSimilarity ():
     X_train = scaler.fit_transform(X_train)
     print (X_train.shape)
 
-    similarity_matrix = np.inner(X_train, X_train)
+    similarity_matrix = cosine_similarity(X_train)
   
     plt.figure()
     # plt.plot(y_train)
@@ -210,14 +210,14 @@ def analyse_accuracy():
 
 
 if __name__ == "__main__":  
-    train_word2vec()
-    train_TFIDF()
-    BuildDataSet(subset='train')
-    BuildDataSet(subset='test')
+    # train_word2vec()
+    # train_TFIDF()
+    # BuildDataSet(subset='train')
+    # BuildDataSet(subset='test')
     # classify()
-    # plotCustomRepSimilarity()
+    plotCustomRepSimilarity()
     # draw_tsne('custom_doc2vec_data\\X_train.csv', 'custom_doc2vec_data\\y_train.csv', method='custom rep')
-    analyse_accuracy()
+    # analyse_accuracy()
     # model_path = "model\\my_word2vec_20news_model"
     # w2v_model = gensim.models.word2vec.Word2Vec.load(model_path)
     # print ('cryptozoology embedding ', w2v_model.wv['cryptozoology'])

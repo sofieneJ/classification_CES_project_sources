@@ -128,8 +128,9 @@ def plotDoc2VecSimilarity ():
   my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
   X_train, _ = generate_data_set(my_cats, subset='train')
   scaler = StandardScaler()
+  # scaler = MinMaxScaler()
   X_train = scaler.fit_transform(X_train)
-  similarity_matrix = np.inner(X_train, X_train)
+  similarity_matrix = cosine_similarity(X_train)
 
 #   plt.figure()
   plt.title('Cosine similarity of Doc2Vec representation')
@@ -167,7 +168,7 @@ if __name__ == "__main__":
   # generate_data_set(test_cats = my_cats, subset='train')
   # generate_data_set(test_cats = my_cats, subset='test')
   # classify()
-  # plotDoc2VecSimilarity()
+  plotDoc2VecSimilarity()
   # draw_tsne('doc2vec_data\\X_train.csv', 'doc2vec_data\\y_train.csv', method='doc2vec')
-  analyse_accuracy()
+  # analyse_accuracy()
 

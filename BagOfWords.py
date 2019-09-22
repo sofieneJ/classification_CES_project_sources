@@ -32,7 +32,8 @@ cats = ['alt.atheism',
 
 my_cats = ['rec.autos', 'soc.religion.christian', 'rec.sport.baseball', 'sci.electronics', 'sci.med']
 
-dataset_list = [list(read_corpus(fetch_20newsgroups(remove=('headers', 'footers', 'quotes'),
+dataset_list = [list(read_corpus(fetch_20newsgroups(subset='train',
+                                                    remove=('headers', 'footers', 'quotes'),
                                             categories=[cat])['data'],
                                   tokens_only=True, bFastText=True, bRemoveStopWords=True))\
                         for cat in my_cats]
@@ -183,11 +184,14 @@ def plot_learning_curves(X,y):
 def plotTFIDFSimilarity ():
   vectorizer = TfidfVectorizer()
   X_TFIDF = vectorizer.fit_transform(corpus)
-  np_TFIDF = np.array(X_TFIDF.todense())
+
+  nmf_model = NMF(n_components=20, init='nndsvd', random_state=0)
+  np_X_train = np.array(X_TFIDF.todense())
+  X_train_reduced_dim = nmf_model.fit_transform(np_X_train)
   
   scaler = StandardScaler()
-  np_TFIDF = scaler.fit_transform(np_TFIDF)
-  similarity_matrix = np.inner(np_TFIDF, np_TFIDF)
+  X_train_reduced_dim = scaler.fit_transform(X_train_reduced_dim)
+  similarity_matrix = cosine_similarity(X_train_reduced_dim)
 
   # nb_docs = np_TFIDF.shape[0]
   # similarity_matrix = np.zeros(shape=(nb_docs,nb_docs))
@@ -196,15 +200,15 @@ def plotTFIDFSimilarity ():
   #      similarity_matrix[i,j]=cosine_similarity(np_TFIDF[i,:],np_TFIDF[j,:])
 
   plt.figure()
-  plt.title('Cosine similarity of TF-IDF representation')
+  plt.title('Cosine similarity of reduced TF-IDF representation')
   plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
 
 
   plt.show()
 
 if __name__ == "__main__":  
-  classify_corpus()
-  # plotTFIDFSimilarity()
+  # classify_corpus()
+  plotTFIDFSimilarity()
 
 # print (corpus_test[0])
 # print(vectorizer.get_feature_names())

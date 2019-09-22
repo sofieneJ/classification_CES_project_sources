@@ -3,7 +3,6 @@ import tensorflow_hub as hub
 from tools import *
 
 
-from tools import *
 
 import os
 import re
@@ -92,12 +91,12 @@ def plotBERTTextSimilarity ():
     X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
     # y_train = np.loadtxt('local_universal_encoder_data\\y_train.csv', delimiter=',')
 
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
+    # scaler = StandardScaler()
+    # X_train = scaler.fit_transform(X_train)
     # scaler = MinMaxScaler()
     # X_train = scaler.fit_transform(X_train)
 
-    similarity_matrix = np.inner(X_train, X_train)
+    similarity_matrix = cosine_similarity(X_train)
     # nb_docs = X_train.shape[0]
     # similarity_matrix = np.zeros(shape=(nb_docs,nb_docs))
     # for i in range (0, nb_docs):
@@ -107,7 +106,7 @@ def plotBERTTextSimilarity ():
     # plt.figure()
     # plt.plot(y_train)
     plt.figure()
-    plt.title('Cosine similarity of BERT Base representation')
+    plt.title('Cosine similarity of BERT (USE) representation')
     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
     plt.show()
 
@@ -172,6 +171,6 @@ if __name__ == "__main__":
     # X_test, y_test = generate_data_set(my_cats, subset='test')
     # classify()
     # plotBERTTextSimilarity()
-    analyse_accuracy()
-    # draw_tsne('local_universal_encoder_data\\X_train.csv', 'local_universal_encoder_data\\y_train.csv', method='BERT')
+    # analyse_accuracy()
+    draw_tsne('local_universal_encoder_data\\X_train.csv', 'local_universal_encoder_data\\y_train.csv', method='BERT')
 

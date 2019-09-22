@@ -11,11 +11,11 @@ def classify(method = 'BERT', bPCA = True, nb_clusters=5):
    
 
     if method == 'BERT':
-        X_train = np.loadtxt('bert_embeddings_data\\X_train.csv', delimiter=',')
+        X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
         if bPCA:
             pca = PCA(n_components=200)
             X_train = pca.fit_transform(X_train)
-        # y_train = np.loadtxt('bert_embeddings_data\\y_train.csv', delimiter=',')
+        # y_train = np.loadtxt('local_universal_encoder_data\\y_train.csv', delimiter=',')
 
 
     if method == 'ElMO':
@@ -40,7 +40,7 @@ def classify(method = 'BERT', bPCA = True, nb_clusters=5):
 
     if method == 'all':
         subplot(2,2,1)
-        X_train = np.loadtxt('bert_embeddings_data\\X_train.csv', delimiter=',')
+        X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
         if bPCA:
             pca = PCA(n_components=200)
             X_train = pca.fit_transform(X_train)
@@ -83,13 +83,15 @@ def classify(method = 'BERT', bPCA = True, nb_clusters=5):
 
 
 def retrieve_data (i):
+    scaler = StandardScaler()
     if i==0: 
         method = 'BERT'
-        X_train = np.loadtxt('bert_embeddings_data\\X_train.csv', delimiter=',')
+        X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
         if bPCA:
             pca = PCA(n_components=200)
             X_train = pca.fit_transform(X_train)
-        # y_train = np.loadtxt('bert_embeddings_data\\y_train.csv', delimiter=',')
+            # X_train = scaler.fit_transform(X_train)
+        # y_train = np.loadtxt('local_universal_encoder_data\\y_train.csv', delimiter=',')
 
 
     if i==1: 
@@ -99,6 +101,7 @@ def retrieve_data (i):
         if bPCA:
             pca = PCA(n_components=200)
             X_train = pca.fit_transform(X_train)
+            # X_train = scaler.fit_transform(X_train)
         
     if i==2: 
         method =  'FastText'
@@ -106,6 +109,7 @@ def retrieve_data (i):
         if bPCA:
             pca = PCA(n_components=100)
             X_train = pca.fit_transform(X_train)
+            # X_train = scaler.fit_transform(X_train)
     
     if i==3: 
         method =  'word2vec+TF-IDF'
@@ -113,6 +117,7 @@ def retrieve_data (i):
         if bPCA:
             pca = PCA(n_components=100)
             X_train = pca.fit_transform(X_train)
+            # X_train = scaler.fit_transform(X_train)
 
     return X_train, method
 
@@ -200,7 +205,7 @@ if __name__ == "__main__":
     # classify(method='ElMO', bPCA=bPCA)
     # classify(method='doc2vec', bPCA=bPCA)
     # plotCustomRepSimilarity()
-    K= 3
+    K= 5
     classify(method='all',nb_clusters=K)
     evaluate_with_silouhaite(nb_clusters=K)
 

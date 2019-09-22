@@ -8,27 +8,27 @@ import tensorflow_hub as hub
 
 
 
-def generate_data_set(test_cats, subset='train'):
-    test_dataset_list = [list(read_corpus(fetch_20newsgroups(subset=subset,
-                                                            remove=('headers', 'footers', 'quotes'),
-                                                            categories=[cat])['data'], 
-                                        tokens_only=True, bRemoveStopWords = True, bFastText=False))\
-                        for cat in test_cats]
+# def generate_data_set(test_cats, subset='train'):
+#     test_dataset_list = [list(read_corpus(fetch_20newsgroups(subset=subset,
+#                                                             remove=('headers', 'footers', 'quotes'),
+#                                                             categories=[cat])['data'], 
+#                                         tokens_only=True, bRemoveStopWords = True, bFastText=False))\
+#                         for cat in test_cats]
 
-    model_path = "model\\my_doc2vec_20news_model"
-    model = gensim.models.doc2vec.Doc2Vec.load(model_path)
-    category_size = min ([len(test_dataset_list[k]) for k, _ in enumerate(test_dataset_list)])
+#     model_path = "model\\my_doc2vec_20news_model"
+#     model = gensim.models.doc2vec.Doc2Vec.load(model_path)
+#     category_size = min ([len(test_dataset_list[k]) for k, _ in enumerate(test_dataset_list)])
 
-    X = np.vstack(np.array(model.infer_vector(test_dataset_list[i][k])) \
-        for i, _ in enumerate(test_cats) for k in range(0, category_size) )
-    tags = [i for i, _ in enumerate(test_cats) for k in range(0, category_size) ]
+#     X = np.vstack(np.array(model.infer_vector(test_dataset_list[i][k])) \
+#         for i, _ in enumerate(test_cats) for k in range(0, category_size) )
+#     tags = [i for i, _ in enumerate(test_cats) for k in range(0, category_size) ]
 
-    y = np.array(tags)
+#     y = np.array(tags)
 
-    print (X.shape)
-    print (y.shape)
+#     print (X.shape)
+#     print (y.shape)
 
-    return X, y
+#     return X, y
 
 def classify():
 
@@ -36,8 +36,8 @@ def classify():
     # my_cats = ['rec.autos', 'soc.religion.christian']
     # X_train, y_train = generate_data_set(my_cats, subset='train')
 
-    X_train = np.loadtxt('bert_embeddings_data\\X_train.csv', delimiter=',')
-    y_train = np.loadtxt('bert_embeddings_data\\y_train.csv', delimiter=',')
+    X_train = np.loadtxt('local_universal_encoder_data\\X_train.csv', delimiter=',')
+    y_train = np.loadtxt('local_universal_encoder_data\\y_train.csv', delimiter=',')
 
     centroids = [['car', 'engine', 'drive', 'speed'],
     ['religion', 'jesus', 'god', 'believe', 'heaven', 'sin'],
@@ -50,7 +50,7 @@ def classify():
     # ['religion', 'jesus', 'god', 'believe', 'heaven', 'sin']]
 
     #@param ["https://tfhub.dev/google/universal-sentence-encoder/2", "https://tfhub.dev/google/universal-sentence-encoder-large/3"]
-    module_url = "https://tfhub.dev/google/universal-sentence-encoder/2" 
+    module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/3" 
     embed = hub.Module(module_url)
     tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -85,26 +85,26 @@ def classify():
 
 
 
-def plotCustomRepSimilarity ():
-    X_train = np.loadtxt('custom_doc2vec_data\\X_train.csv', delimiter=',')
-    y_train = np.loadtxt('custom_doc2vec_data\\y_train.csv', delimiter=',')
-    train_index = np.where(X_train.any(axis=1))[0]
+# def plotCustomRepSimilarity ():
+#     X_train = np.loadtxt('custom_doc2vec_data\\X_train.csv', delimiter=',')
+#     y_train = np.loadtxt('custom_doc2vec_data\\y_train.csv', delimiter=',')
+#     train_index = np.where(X_train.any(axis=1))[0]
 
-    X_train = X_train[train_index]
-    y_train = y_train[train_index]
+#     X_train = X_train[train_index]
+#     y_train = y_train[train_index]
 
-    nb_docs = X_train.shape[0]
-    similarity_matrix = np.zeros(shape=(nb_docs,nb_docs))
-    for i in range (0, nb_docs):
-        for j in range (0, nb_docs):
-            similarity_matrix[i,j]=cosine_similarity(X_train[i,:],X_train[j,:])
+#     nb_docs = X_train.shape[0]
+#     similarity_matrix = np.zeros(shape=(nb_docs,nb_docs))
+#     for i in range (0, nb_docs):
+#         for j in range (0, nb_docs):
+#             similarity_matrix[i,j]=cosine_similarity(X_train[i,:],X_train[j,:])
   
-    plt.figure()
-    plt.plot(y_train)
+#     plt.figure()
+#     plt.plot(y_train)
 
-    plt.title('Cosine similarity of custom document representation')
-    plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
-    plt.show()
+#     plt.title('Cosine similarity of custom document representation')
+#     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
+#     plt.show()
 
 if __name__ == "__main__":  
     # train_word2vec()
